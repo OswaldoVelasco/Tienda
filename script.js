@@ -1,7 +1,7 @@
 // ==========================================
 // VARIABLES
 // ==========================================
- 
+
 let productos = [];
 
 let carrito =
@@ -38,20 +38,28 @@ const cerrarCarrito =
 
 
 // ==========================================
-// CARGAR CATÁLOGO CSV
+// CARGAR CATÁLOGO
 // ==========================================
 
 async function cargarCatalogo() {
 
     try {
 
+        console.log("1. Iniciando catálogo...");
+
         const respuesta =
-            await fetch("catalogo.csv");
+            await fetch("./catalogo.csv");
+
+        console.log(
+            "2. Respuesta CSV:",
+            respuesta.status,
+            respuesta.statusText
+        );
 
         if (!respuesta.ok) {
 
             throw new Error(
-                "No se pudo cargar catalogo.csv"
+                "No se encontró catalogo.csv"
             );
 
         }
@@ -59,8 +67,39 @@ async function cargarCatalogo() {
         const texto =
             await respuesta.text();
 
+        console.log(
+            "3. CSV recibido:",
+            texto
+        );
+
+
         productos =
             convertirCSV(texto);
+
+
+        console.log(
+            "4. Productos detectados:",
+            productos
+        );
+
+
+        if (productos.length === 0) {
+
+            contenedorProductos.innerHTML = `
+                <p style="
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 40px;
+                    font-size: 20px;
+                ">
+                    El CSV se encontró, pero no contiene productos válidos.
+                </p>
+            `;
+
+            return;
+
+        }
+
 
         mostrarProductos();
 
@@ -68,28 +107,37 @@ async function cargarCatalogo() {
 
         mostrarCarrito();
 
-        console.log(
-            "Catálogo cargado:",
-            productos
-        );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "Error al cargar el catálogo:",
+            "ERROR:",
             error
         );
 
-        contenedorProductos.innerHTML = `
 
-            <p style="
+        contenedorProductos.innerHTML = `
+            <div style="
                 grid-column: 1 / -1;
                 text-align: center;
                 padding: 40px;
             ">
-                No se pudo cargar el catálogo.
-            </p>
 
+                <h3>
+                    ❌ Error al cargar el catálogo
+                </h3>
+
+                <p>
+                    ${error.message}
+                </p>
+
+                <p>
+                    Revisa la consola del navegador.
+                </p>
+
+            </div>
         `;
 
     }
@@ -103,157 +151,144 @@ async function cargarCatalogo() {
 
 function convertirCSV(texto) {
 
-    const filas =
-        [];
-
-    let fila =
-        [];
-
-    let campo =
-        "";
-
-    let dentroComillas =
-        false;
+    texto =
+        texto.replace(/^\uFEFF/, "");
 
 
-    for (let i = 0; i < texto.length; i++) {
-
-        const caracter =
-            texto[i];
-
-        const siguiente =
-            texto[i + 1];
-
-
-        if (caracter === '"' && dentroComillas && siguiente === '"') {
-
-            campo += '"';
-
-            i++;
-
-        }
-
-        else if (caracter === '"') {
-
-            dentroComillas =
-                !dentroComillas;
-
-        }
-
-        else if (caracter === "," && !dentroComillas) {
-
-            fila.push(campo);
-
-            campo = "";
-
-        }
-
-        else if (
-            (caracter === "\n" || caracter === "\r")
-            && !dentroComillas
-        ) {
-
-            if (caracter === "\r" && siguiente === "\n") {
-
-                i++;
-
-            }
-
-            fila.push(campo);
-
-            campo = "";
-
-            if (fila.some(valor => valor.trim() !== "")) {
-
-                filas.push(fila);
-
-            }
-
-            fila = [];
-
-        }
-
-        else {
-
-            campo += caracter;
-
-        }
-
-    }
+    const lineas =
+        texto
+            .split(/\r?\n/)
+            .filter(
+                linea =>
+                    linea.trim() !== ""
+            );
 
 
-    if (campo !== "" || fila.length > 0) {
-
-        fila.push(campo);
-
-        filas.push(fila);
-
-    }
-
-
-    if (filas.length < 2) {
+    if (lineas.length < 2) {
 
         return [];
 
     }
 
 
+    // Detectar separador
+    const separador =
+        lineas[0].includes(";")
+            ? ";"
+            : ",";
+
+
+    console.log(
+        "Separador detectado:",
+        separador
+    );
+
+
+    // Encabezados
     const encabezados =
-        filas[0].map(
-            encabezado =>
-                encabezado.trim().toLowerCase()
-        );
-
-
-    return filas
-        .slice(1)
-        .map(fila => {
-
-            const producto = {};
-
-            encabezados.forEach(
-                (encabezado, indice) => {
-
-                    producto[encabezado] =
-                        fila[indice]
-                            ? fila[indice].trim()
-                            : "";
-
-                }
+        lineas[0]
+            .split(separador)
+            .map(
+                encabezado =>
+                    encabezado
+                        .replace(/^\uFEFF/, "")
+                        .trim()
+                        .toLowerCase()
             );
 
 
-            return {
+    console.log(
+        "Encabezados:",
+        encabezados
+    );
 
-                id:
-                    Number(producto.id),
 
-                nombre:
-                    producto.nombre,
+    const productosCSV = [];
 
-                categoria:
-                    producto.categoria,
 
-                descripcion:
-                    producto.descripcion,
+    for (
+        let i = 1;
+        i < lineas.length;
+        i++
+    ) {
 
-                precio:
-                    Number(
-                        producto.precio
-                            .replace(/[$,]/g, "")
-                    ),
+        const columnas =
+            lineas[i]
+                .split(separador)
+                .map(
+                    valor =>
+                        valor.trim()
+                );
 
-                imagen:
-                    producto.imagen
 
-            };
+        const producto = {};
 
-        })
-        .filter(
-            producto =>
-                producto.id &&
-                producto.nombre
+
+        encabezados.forEach(
+            (encabezado, indice) => {
+
+                producto[encabezado] =
+                    columnas[indice] || "";
+
+            }
         );
+
+
+        let precio =
+            producto.precio || "0";
+
+
+        precio =
+            precio
+                .replace(/\$/g, "")
+                .replace(/,/g, "")
+                .trim();
+
+
+        const productoFinal = {
+
+            id:
+                Number(producto.id),
+
+            nombre:
+                producto.nombre,
+
+            categoria:
+                producto.categoria,
+
+            descripcion:
+                producto.descripcion,
+
+            precio:
+                Number(precio),
+
+            imagen:
+                producto.imagen
+
+        };
+
+
+        console.log(
+            "Producto:",
+            productoFinal
+        );
+
+
+        if (
+            productoFinal.id > 0 &&
+            productoFinal.nombre !== ""
+        ) {
+
+            productosCSV.push(
+                productoFinal
+            );
+
+        }
+
+    }
+
+
+    return productosCSV;
 
 }
 
@@ -267,68 +302,72 @@ function mostrarProductos() {
     contenedorProductos.innerHTML = "";
 
 
-    productos.forEach(producto => {
+    productos.forEach(
+        producto => {
 
-        const tarjeta =
-            document.createElement("div");
-
-        tarjeta.className =
-            "producto";
-
-        tarjeta.dataset.id =
-            producto.id;
+            const tarjeta =
+                document.createElement("div");
 
 
-        tarjeta.innerHTML = `
-
-            <div class="producto-imagen">
-
-                <img
-                    src="img/${producto.imagen}"
-                    alt="${producto.nombre}"
-                >
-
-            </div>
+            tarjeta.className =
+                "producto";
 
 
-            <div class="producto-info">
-
-                <h3>
-                    ${producto.nombre}
-                </h3>
-
-                <p class="categoria">
-                    ${producto.categoria}
-                </p>
-
-                <p class="descripcion">
-                    ${producto.descripcion}
-                </p>
-
-                <p class="precio">
-                    $${producto.precio.toLocaleString("es-MX")}
-                </p>
-
-                <button class="boton">
-                    Agregar al carrito
-                </button>
-
-            </div>
-
-        `;
+            tarjeta.dataset.id =
+                producto.id;
 
 
-        contenedorProductos.appendChild(
-            tarjeta
-        );
+            tarjeta.innerHTML = `
 
-    });
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/${producto.imagen}"
+                        alt="${producto.nombre}"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        ${producto.nombre}
+                    </h3>
+
+                    <p class="categoria">
+                        ${producto.categoria}
+                    </p>
+
+                    <p class="descripcion">
+                        ${producto.descripcion}
+                    </p>
+
+                    <p class="precio">
+                        $${producto.precio.toLocaleString("es-MX")}
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            `;
+
+
+            contenedorProductos.appendChild(
+                tarjeta
+            );
+
+        }
+    );
 
 }
 
 
 // ==========================================
-// CONECTAR BOTONES
+// BOTONES DE PRODUCTOS
 // ==========================================
 
 function conectarBotones() {
@@ -337,44 +376,310 @@ function conectarBotones() {
         document.querySelectorAll(".boton");
 
 
-    botones.forEach(boton => {
+    botones.forEach(
+        boton => {
 
-        boton.addEventListener(
-            "click",
-            function() {
+            boton.addEventListener(
+                "click",
+                function() {
 
-                const tarjeta =
-                    boton.closest(".producto");
+                    const tarjeta =
+                        boton.closest(".producto");
 
-                const idProducto =
-                    Number(
-                        tarjeta.dataset.id
+
+                    const idProducto =
+                        Number(
+                            tarjeta.dataset.id
+                        );
+
+
+                    agregarAlCarrito(
+                        idProducto
                     );
 
 
-                agregarAlCarrito(
-                    idProducto
-                );
+                    carritoPanel.classList.add(
+                        "abierto"
+                    );
 
 
-                carritoPanel.classList.add(
-                    "abierto"
-                );
+                    carritoOverlay.classList.add(
+                        "abierto"
+                    );
 
-                carritoOverlay.classList.add(
-                    "abierto"
-                );
+                }
+            );
 
-            }
-        );
-
-    });
+        }
+    );
 
 }
 
 
 // ==========================================
-// ABRIR CARRITO
+// CARRITO
+// ==========================================
+
+function agregarAlCarrito(idProducto) {
+
+    const producto =
+        productos.find(
+            producto =>
+                producto.id === idProducto
+        );
+
+
+    if (!producto) {
+        return;
+    }
+
+
+    const existente =
+        carrito.find(
+            item =>
+                item.id === idProducto
+        );
+
+
+    if (existente) {
+
+        existente.cantidad++;
+
+    }
+
+    else {
+
+        carrito.push({
+
+            id:
+                producto.id,
+
+            nombre:
+                producto.nombre,
+
+            precio:
+                producto.precio,
+
+            cantidad:
+                1
+
+        });
+
+    }
+
+
+    guardarCarrito();
+
+    mostrarCarrito();
+
+}
+
+
+function aumentarCantidad(idProducto) {
+
+    const producto =
+        carrito.find(
+            item =>
+                item.id === idProducto
+        );
+
+
+    if (producto) {
+
+        producto.cantidad++;
+
+    }
+
+
+    guardarCarrito();
+
+    mostrarCarrito();
+
+}
+
+
+function disminuirCantidad(idProducto) {
+
+    const producto =
+        carrito.find(
+            item =>
+                item.id === idProducto
+        );
+
+
+    if (!producto) {
+        return;
+    }
+
+
+    producto.cantidad--;
+
+
+    if (producto.cantidad <= 0) {
+
+        carrito =
+            carrito.filter(
+                item =>
+                    item.id !== idProducto
+            );
+
+    }
+
+
+    guardarCarrito();
+
+    mostrarCarrito();
+
+}
+
+
+function eliminarProducto(idProducto) {
+
+    carrito =
+        carrito.filter(
+            item =>
+                item.id !== idProducto
+        );
+
+
+    guardarCarrito();
+
+    mostrarCarrito();
+
+}
+
+
+function guardarCarrito() {
+
+    localStorage.setItem(
+        "carrito",
+        JSON.stringify(carrito)
+    );
+
+}
+
+
+// ==========================================
+// MOSTRAR CARRITO
+// ==========================================
+
+function mostrarCarrito() {
+
+    carritoContenido.innerHTML = "";
+
+
+    if (carrito.length === 0) {
+
+        carritoContenido.innerHTML = `
+            <div class="carrito-vacio">
+                🛒 Tu carrito está vacío.
+            </div>
+        `;
+
+        carritoTotal.textContent =
+            "$0";
+
+        contadorCarrito.textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    let total = 0;
+
+    let cantidadTotal = 0;
+
+
+    carrito.forEach(
+        producto => {
+
+            const subtotal =
+                producto.precio *
+                producto.cantidad;
+
+
+            total += subtotal;
+
+            cantidadTotal +=
+                producto.cantidad;
+
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "item-carrito";
+
+
+            item.innerHTML = `
+
+                <div class="item-info">
+
+                    <h3>
+                        ${producto.nombre}
+                    </h3>
+
+                    <p class="item-precio">
+                        $${producto.precio.toLocaleString("es-MX")}
+                    </p>
+
+                    <div class="cantidad-control">
+
+                        <button
+                            onclick="disminuirCantidad(${producto.id})"
+                        >
+                            −
+                        </button>
+
+                        <span class="cantidad">
+                            ${producto.cantidad}
+                        </span>
+
+                        <button
+                            onclick="aumentarCantidad(${producto.id})"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="eliminar-producto"
+                    onclick="eliminarProducto(${producto.id})"
+                >
+                    🗑️
+                </button>
+
+            `;
+
+
+            carritoContenido.appendChild(
+                item
+            );
+
+        }
+    );
+
+
+    carritoTotal.textContent =
+        "$" +
+        total.toLocaleString("es-MX");
+
+
+    contadorCarrito.textContent =
+        cantidadTotal;
+
+}
+
+
+// ==========================================
+// ABRIR / CERRAR CARRITO
 // ==========================================
 
 abrirCarrito.addEventListener(
@@ -396,10 +701,6 @@ abrirCarrito.addEventListener(
     }
 );
 
-
-// ==========================================
-// CERRAR CARRITO
-// ==========================================
 
 cerrarCarrito.addEventListener(
     "click",
@@ -434,295 +735,6 @@ carritoOverlay.addEventListener(
 
 
 // ==========================================
-// AGREGAR AL CARRITO
-// ==========================================
-
-function agregarAlCarrito(idProducto) {
-
-    const producto =
-        productos.find(
-            producto =>
-                producto.id === idProducto
-        );
-
-
-    if (!producto) {
-
-        console.error(
-            "Producto no encontrado"
-        );
-
-        return;
-
-    }
-
-
-    const productoExistente =
-        carrito.find(
-            item =>
-                item.id === idProducto
-        );
-
-
-    if (productoExistente) {
-
-        productoExistente.cantidad++;
-
-    }
-
-    else {
-
-        carrito.push({
-
-            id:
-                producto.id,
-
-            nombre:
-                producto.nombre,
-
-            precio:
-                producto.precio,
-
-            cantidad:
-                1
-
-        });
-
-    }
-
-
-    guardarCarrito();
-
-    mostrarCarrito();
-
-}
-
-
-// ==========================================
-// AUMENTAR CANTIDAD
-// ==========================================
-
-function aumentarCantidad(idProducto) {
-
-    const producto =
-        carrito.find(
-            item =>
-                item.id === idProducto
-        );
-
-
-    if (producto) {
-
-        producto.cantidad++;
-
-    }
-
-
-    guardarCarrito();
-
-    mostrarCarrito();
-
-}
-
-
-// ==========================================
-// DISMINUIR CANTIDAD
-// ==========================================
-
-function disminuirCantidad(idProducto) {
-
-    const producto =
-        carrito.find(
-            item =>
-                item.id === idProducto
-        );
-
-
-    if (!producto) {
-
-        return;
-
-    }
-
-
-    producto.cantidad--;
-
-
-    if (producto.cantidad <= 0) {
-
-        carrito =
-            carrito.filter(
-                item =>
-                    item.id !== idProducto
-            );
-
-    }
-
-
-    guardarCarrito();
-
-    mostrarCarrito();
-
-}
-
-
-// ==========================================
-// ELIMINAR PRODUCTO
-// ==========================================
-
-function eliminarProducto(idProducto) {
-
-    carrito =
-        carrito.filter(
-            item =>
-                item.id !== idProducto
-        );
-
-
-    guardarCarrito();
-
-    mostrarCarrito();
-
-}
-
-
-// ==========================================
-// GUARDAR CARRITO
-// ==========================================
-
-function guardarCarrito() {
-
-    localStorage.setItem(
-        "carrito",
-        JSON.stringify(carrito)
-    );
-
-}
-
-
-// ==========================================
-// MOSTRAR CARRITO
-// ==========================================
-
-function mostrarCarrito() {
-
-    carritoContenido.innerHTML = "";
-
-
-    if (carrito.length === 0) {
-
-        carritoContenido.innerHTML = `
-
-            <div class="carrito-vacio">
-                🛒 Tu carrito está vacío.
-            </div>
-
-        `;
-
-
-        carritoTotal.textContent =
-            "$0";
-
-        contadorCarrito.textContent =
-            "0";
-
-        return;
-
-    }
-
-
-    let total = 0;
-
-    let cantidadTotal = 0;
-
-
-    carrito.forEach(producto => {
-
-        const subtotal =
-            producto.precio *
-            producto.cantidad;
-
-
-        total += subtotal;
-
-        cantidadTotal +=
-            producto.cantidad;
-
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "item-carrito";
-
-
-        item.innerHTML = `
-
-            <div class="item-info">
-
-                <h3>
-                    ${producto.nombre}
-                </h3>
-
-                <p class="item-precio">
-                    $${producto.precio.toLocaleString("es-MX")}
-                </p>
-
-
-                <div class="cantidad-control">
-
-                    <button
-                        onclick="disminuirCantidad(${producto.id})"
-                    >
-                        −
-                    </button>
-
-                    <span class="cantidad">
-                        ${producto.cantidad}
-                    </span>
-
-                    <button
-                        onclick="aumentarCantidad(${producto.id})"
-                    >
-                        +
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="eliminar-producto"
-                onclick="eliminarProducto(${producto.id})"
-                title="Eliminar producto"
-            >
-                🗑️
-            </button>
-
-        `;
-
-
-        carritoContenido.appendChild(
-            item
-        );
-
-    });
-
-
-    carritoTotal.textContent =
-        "$" +
-        total.toLocaleString("es-MX");
-
-
-    contadorCarrito.textContent =
-        cantidadTotal;
-
-}
-
-
-// ==========================================
 // FINALIZAR COMPRA
 // ==========================================
 
@@ -754,10 +766,6 @@ const resumenTotal =
     document.getElementById("resumenTotal");
 
 
-// ==========================================
-// ABRIR FORMULARIO
-// ==========================================
-
 botonComprar.addEventListener(
     "click",
     function() {
@@ -787,10 +795,6 @@ botonComprar.addEventListener(
     }
 );
 
-
-// ==========================================
-// CERRAR FORMULARIO
-// ==========================================
 
 cerrarCompra.addEventListener(
     "click",
@@ -825,7 +829,7 @@ compraOverlay.addEventListener(
 
 
 // ==========================================
-// MOSTRAR RESUMEN
+// RESUMEN DE COMPRA
 // ==========================================
 
 function mostrarResumenCompra() {
@@ -835,52 +839,53 @@ function mostrarResumenCompra() {
     let total = 0;
 
 
-    carrito.forEach(producto => {
+    carrito.forEach(
+        producto => {
 
-        const subtotal =
-            producto.precio *
-            producto.cantidad;
-
-
-        total += subtotal;
+            const subtotal =
+                producto.precio *
+                producto.cantidad;
 
 
-        const productoResumen =
-            document.createElement("div");
+            total += subtotal;
 
 
-        productoResumen.className =
-            "producto-resumen";
+            const elemento =
+                document.createElement("div");
 
 
-        productoResumen.innerHTML = `
+            elemento.className =
+                "producto-resumen";
 
-            <div>
+
+            elemento.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${producto.nombre}
+                    </strong>
+
+                    <span>
+                        ${producto.cantidad} x
+                        $${producto.precio.toLocaleString("es-MX")}
+                    </span>
+
+                </div>
 
                 <strong>
-                    ${producto.nombre}
+                    $${subtotal.toLocaleString("es-MX")}
                 </strong>
 
-                <span>
-                    ${producto.cantidad} x
-                    $${producto.precio.toLocaleString("es-MX")}
-                </span>
-
-            </div>
+            `;
 
 
-            <strong>
-                $${subtotal.toLocaleString("es-MX")}
-            </strong>
+            resumenProductos.appendChild(
+                elemento
+            );
 
-        `;
-
-
-        resumenProductos.appendChild(
-            productoResumen
-        );
-
-    });
+        }
+    );
 
 
     resumenTotal.textContent =
@@ -891,7 +896,7 @@ function mostrarResumenCompra() {
 
 
 // ==========================================
-// ENVIAR PEDIDO POR WHATSAPP
+// WHATSAPP
 // ==========================================
 
 enviarWhatsApp.addEventListener(
@@ -936,20 +941,22 @@ enviarWhatsApp.addEventListener(
         let mensajeProductos = "";
 
 
-        carrito.forEach(producto => {
+        carrito.forEach(
+            producto => {
 
-            const subtotal =
-                producto.precio *
-                producto.cantidad;
-
-
-            total += subtotal;
+                const subtotal =
+                    producto.precio *
+                    producto.cantidad;
 
 
-            mensajeProductos +=
-                `- ${producto.nombre} x${producto.cantidad} — $${subtotal.toLocaleString("es-MX")}\n`;
+                total += subtotal;
 
-        });
+
+                mensajeProductos +=
+                    `- ${producto.nombre} x${producto.cantidad} — $${subtotal.toLocaleString("es-MX")}\n`;
+
+            }
+        );
 
 
         const mensaje =
@@ -989,7 +996,7 @@ ${mensajeProductos}
 
 
 // ==========================================
-// INICIAR TIENDA
+// INICIAR
 // ==========================================
 
 cargarCatalogo();

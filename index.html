@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi Tienda</title>
+
+    <!-- Archivo CSS externo -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         ENCABEZADO
+    =========================================== -->
+
+    <header>
+
+        <h1>Mi Tienda</h1>
+
+        <nav>
+
+            <a href="#">
+                Inicio
+            </a>
+
+            <a href="#catalogo">
+                Catálogo
+            </a>
+
+            <a href="#" id="abrirCarrito">
+                🛒 Carrito
+                <span id="contadorCarrito">0</span>
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         PRESENTACIÓN
+    =========================================== -->
+
+    <section class="hero">
+
+        <h2>
+            Bienvenido a Mi Tienda
+        </h2>
+
+        <p>
+            Encuentra productos de tecnología
+            y accesorios al mejor precio.
+        </p>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         CATÁLOGO
+    =========================================== -->
+
+    <section class="catalogo" id="catalogo">
+
+        <h2>
+            Nuestros productos
+        </h2>
+
+
+        <div class="productos">
+
+
+            <!-- ==================================
+                 PRODUCTO 1
+            =================================== -->
+
+            <div class="producto" data-id="1">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/laptop.jpg"
+                        alt="Laptop Pro 15"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Laptop Pro 15
+                    </h3>
+
+                    <p class="categoria">
+                        Electrónica
+                    </p>
+
+                    <p class="descripcion">
+                        Laptop de 15 pulgadas
+                        ideal para trabajo y estudio.
+                    </p>
+
+                    <p class="precio">
+                        $15,999
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 2
+            =================================== -->
+
+<div class="producto" data-id="2">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/audifonos.jpg"
+                        alt="Audífonos Bluetooth"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Audífonos Bluetooth
+                    </h3>
+
+                    <p class="categoria">
+                        Electrónica
+                    </p>
+
+                    <p class="descripcion">
+                        Audífonos inalámbricos
+                        con sonido de alta calidad.
+                    </p>
+
+                    <p class="precio">
+                        $899
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 3
+            =================================== -->
+
+            <div class="producto" data-id="3">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/teclado.jpg"
+                        alt="Teclado Mecánico"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Teclado Mecánico
+                    </h3>
+
+                    <p class="categoria">
+                        Accesorios
+                    </p>
+
+                    <p class="descripcion">
+                        Teclado mecánico ideal
+                        para gaming y trabajo.
+                    </p>
+
+                    <p class="precio">
+                        $1,299
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 4
+            =================================== -->
+
+            <div class="producto" data-id="4">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/mouse.jpg"
+                        alt="Mouse Gamer"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Mouse Gamer
+                    </h3>
+
+                    <p class="categoria">
+                        Accesorios
+                    </p>
+
+                    <p class="descripcion">
+                        Mouse de alta precisión
+                        para videojuegos.
+                    </p>
+
+                    <p class="precio">
+                        $699
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 5
+            =================================== -->
+
+            <div class="producto" data-id="5">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/monitor.jpg"
+                        alt="Monitor 24 pulgadas Full HD"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Monitor 24" Full HD
+                    </h3>
+
+                    <p class="categoria">
+                        Electrónica
+                    </p>
+
+                    <p class="descripcion">
+                        Monitor Full HD de 24 pulgadas
+                        para trabajo y entretenimiento.
+                    </p>
+
+                    <p class="precio">
+                        $3,499
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 6
+            =================================== -->
+
+            <div class="producto" data-id="6">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/webcam.jpg"
+                        alt="Webcam HD"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Webcam HD
+                    </h3>
+
+                    <p class="categoria">
+                        Accesorios
+                    </p>
+
+                    <p class="descripcion">
+                        Cámara HD para
+                        videollamadas y reuniones.
+                    </p>
+
+                    <p class="precio">
+                        $799
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 7
+            =================================== -->
+
+            <div class="producto" data-id="7">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/bocina.jpg"
+                        alt="Bocina Bluetooth"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Bocina Bluetooth
+                    </h3>
+
+                    <p class="categoria">
+                        Audio
+                    </p>
+
+                    <p class="descripcion">
+                        Bocina portátil
+                        con conexión Bluetooth.
+                    </p>
+
+                    <p class="precio">
+                        $1,199
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 8
+            =================================== -->
+
+           <div class="producto" data-id="8">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/powerbank.jpg"
+                        alt="Power Bank 20000 mAh"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Power Bank 20,000 mAh
+                    </h3>
+
+                    <p class="categoria">
+                        Accesorios
+                    </p>
+
+                    <p class="descripcion">
+                        Batería portátil de gran capacidad
+                        para tus dispositivos.
+                    </p>
+
+                    <p class="precio">
+                        $599
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 9
+            =================================== -->
+
+            <div class="producto" data-id="9">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/usb.jpg"
+                        alt="Memoria USB 128 GB"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Memoria USB 128 GB
+                    </h3>
+
+                    <p class="categoria">
+                        Almacenamiento
+                    </p>
+
+                    <p class="descripcion">
+                        Memoria USB de 128 GB
+                        para almacenar tus archivos.
+                    </p>
+
+                    <p class="precio">
+                        $349
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================
+                 PRODUCTO 10
+            =================================== -->
+
+            <div class="producto" data-id="10">
+
+                <div class="producto-imagen">
+
+                    <img
+                        src="img/ssd.jpg"
+                        alt="Disco SSD 1 TB"
+                    >
+
+                </div>
+
+
+                <div class="producto-info">
+
+                    <h3>
+                        Disco SSD 1 TB
+                    </h3>
+
+                    <p class="categoria">
+                        Almacenamiento
+                    </p>
+
+                    <p class="descripcion">
+                        SSD de 1 TB para mejorar
+                        el almacenamiento y rendimiento.
+                    </p>
+
+                    <p class="precio">
+                        $1,499
+                    </p>
+
+                    <button class="boton">
+                        Agregar al carrito
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         PIE DE PÁGINA
+    =========================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Mi Tienda
+            - Todos los derechos reservados
+        </p>
+
+    </footer>
+
+
+
+    <!-- ==========================================
+         PANEL DEL CARRITO
+    =========================================== -->
+
+    <div
+        class="carrito-panel"
+        id="carritoPanel"
+    >
+
+        <div class="carrito-header">
+
+            <h2>
+                🛒 Mi carrito
+            </h2>
+
+            <button
+                id="cerrarCarrito"
+                class="cerrar-carrito"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div
+            class="carrito-contenido"
+            id="carritoContenido"
+        >
+
+            <!-- JavaScript colocará aquí los productos -->
+
+        </div>
+
+
+        <div class="carrito-footer">
+
+            <div class="carrito-total">
+
+                <span>
+                    Total:
+                </span>
+
+                <strong id="carritoTotal">
+                    $0
+                </strong>
+
+            </div>
+
+
+            <button
+                class="boton-comprar"
+                id="botonComprar"
+            >
+                Finalizar compra
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         FONDO DEL CARRITO
+    =========================================== -->
+
+    <div
+        class="carrito-overlay"
+        id="carritoOverlay"
+    >
+    </div>
+
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+<!-- ==========================================
+     FORMULARIO DE FINALIZAR COMPRA
+========================================== -->
+
+<div class="compra-panel" id="compraPanel">
+
+    <div class="compra-contenido">
+
+        <div class="compra-header">
+            <h2>Finalizar compra</h2>
+
+            <button
+                id="cerrarCompra"
+                class="cerrar-compra"
+            >
+                ✕
+            </button>
+        </div>
+
+
+        <div class="compra-formulario">
+
+            <p class="compra-instruccion">
+                Ingresa tus datos para enviar tu pedido por WhatsApp.
+            </p>
+
+
+            <label for="nombreCliente">
+                Nombre
+            </label>
+
+            <input
+                type="text"
+                id="nombreCliente"
+                placeholder="Escribe tu nombre"
+                required
+            >
+
+
+            <label for="telefonoCliente">
+                Teléfono
+            </label>
+
+            <input
+                type="tel"
+                id="telefonoCliente"
+                placeholder="Ej. 5512345678"
+                required
+            >
+
+
+            <div class="resumen-compra">
+
+                <h3>Resumen del pedido</h3>
+
+                <div id="resumenProductos"></div>
+
+                <div class="resumen-total">
+                    <span>Total:</span>
+
+                    <strong id="resumenTotal">
+                        $0
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <button
+                id="enviarWhatsApp"
+                class="boton-whatsapp"
+            >
+                📱 Enviar pedido por WhatsApp
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div
+    class="compra-overlay"
+    id="compraOverlay"
+></div>
+
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
